@@ -17,6 +17,10 @@ namespace Assesment_Fortitude.Controllers
                 return BadRequest(ModelState);
             }
 
+            if (!Authentication.IsValid(req.PartnerKey, req.PartnerRefNo, req.PartnerPassword))
+            {
+                return Ok(new ResponseModel() { Result = 0 , ResultMesssage = "Unauthorized partner or Signature Mismatch." });
+            }
             ResponseModel res = new();
             res.TotalDiscount = TotalAmountCalculation.CalculateDiscount(req.TotalAmount);
             res.TotalAmount = req.TotalAmount;
@@ -33,5 +37,7 @@ namespace Assesment_Fortitude.Controllers
                 ConvertSig.Sha256HexThenBase64(timeStamp + req.PartnerKey + req.PartnerRefNo + req.TotalAmount.ToString() + req.PartnerPassword) 
                 + ";" + timeStamp;
         }
+
+
     }
 }
